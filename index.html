@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Game: Q</title>
+	<meta charset="utf-8"/>
+	<meta name="author" content="Yuancheng Zhang"/>
+	<meta name="description" content="Game: Q"/>
+	<meta rel="shortcut icon" href="" type="image/x-icon"/>
+	<style>
+		canvas {
+			border: dotted thick red;
+		}
+		.box {
+			border: thin black solid;
+		}
+	</style>
+</head>
+<body>
+	<h1>Game: Q</h1>
+	<h2>Prototype</h2>
+	<canvas id="canvas" width="500" height="500">
+		Your browser doesn't support the <code>canvas</code> element
+	</canvas>
+	<script>
+		var cvs = document.getElementById("canvas");
+		var ctx = cvs.getContext("2d");
+		var cvsW = cvs.width;
+		var cvsH = cvs.height;
+
+		var offset = 30;
+		var size = 50;
+		var line = 3
+		var count = line * line; // 9
+
+		var Rectangle = function (obj) {
+            obj = obj || {};
+            return {
+                name: obj.name || "rectangle",
+                color: obj.color || "blue",
+                x: obj.x || 0,
+                y: obj.y || 0,
+                size: obj.size || 50,
+                draw: function () {
+                	ctx.strokeStyle = this.color;
+                	ctx.strokeRect(this.x, this.y, this.size, this.size);
+                },
+                onmouseover: function () {
+                	
+                },
+            };
+        }
+        var r = new Rectangle();
+
+        var boxes = new Array(count);
+		function init() {
+			
+			for (var i = 0; i < count; i++) {
+				boxes[i] = new Rectangle({
+					name:i,
+					x: (i % line) * (offset + size) + offset,
+					y: parseInt(i / line) * (offset + size) + offset,
+					size: 50,
+				});
+				boxes[i].draw();
+			}
+		};
+
+		function 
+		init();
+
+	</script>
+</body>
+</html>
