@@ -39,21 +39,18 @@ var Rectangle = function (obj) {
 		lineWidth: 3,
 		isShaked: obj.isShaked || false,
 		isCurrent: false,
+		isClicked: false,
 		draw: function () {
 			this.shake();
 			ctx.strokeStyle = this.colorLine;
 			ctx.fillStyle = this.colorFillNorm;
 			ctx.lineWidth = this.lineWidth;
-			if (this.isCurrent) {
+			if (this.isCurrent && !this.isClicked) {
 				ctx.strokeStyle = this.colorLineIsCurr;
 				ctx.lineWidth = this.lineWidth * 2;
 			} 
 			ctx.fillRect(this.x1, this.y1, this.size, this.size);
 			ctx.strokeRect(this.x1, this.y1, this.size, this.size);
-		},
-		moveTo: function (x, y) {
-			this.x0 = x;
-			this.y0 = y;
 		},
 		shake: function () {
 			if(this.isShaked) {
@@ -89,9 +86,9 @@ var Rectangle = function (obj) {
 					buttons[0].innerHTML = "-----"
 				} else {
 					this.colorFillNorm = "yellow";
+					this.isClicked = true;
 				}
 				this.isShaked = false;
-
 			}
 		},
 	};
@@ -141,7 +138,7 @@ function arrange() {
 
 // draw boxes
 function drawBoxes() {
-	for (var i = 0; i < count; i++) {
+	for (var i = 0; i < boxes.length; i++) {
 		boxes[i].draw();
 	}
 }
@@ -191,7 +188,7 @@ function drawTitle(isShaked) {
 function update() {
 	ctx.clearRect(0, 0, canvasMain.width, canvasMain.height);
 	ctx2.clearRect(0, 0, canvasTitle.width, canvasTitle.height);
-	for (var i = 0; i < count; i++) {
+	for (var i = 0; i < boxes.length; i++) {
 		if(boxes[i].isCurrent) {
 			currentBox = boxes[i].name;
 		}
@@ -205,8 +202,10 @@ function update() {
 
 // Shake all boxes
 function shakeAll() {
-	for (var i = 0; i < count; i++) {
-		boxes[i].isShaked = true;
+	for (var i = 0; i < boxes.length; i++) {
+		if (!boxes[i].isClicked) {
+			boxes[i].isShaked = true;
+		}
 	}
 	intv = self.setInterval(update, 100);
 	buttons[0].innerHTML = "Stop";
