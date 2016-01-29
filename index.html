@@ -10,138 +10,24 @@
 		canvas {
 			border: dotted thick red;
 		}
-		.box {
-			border: thin black solid;
-		}
 	</style>
 </head>
 <body>
 	<h1>Game: Q</h1>
 	<h2>Prototype</h2>
-	<canvas id="canvas" width="500" height="500">
+	<canvas id="canvasTitle" width='300', height="100">
+		Your browser doesn't support the <code>canvas</code> element
+	</canvas>
+	<canvas id="canvasMain" width="300" height="300">
 		Your browser doesn't support the <code>canvas</code> element
 	</canvas>
 	<div>
+		<button>Shake</button>
+		<button>Reset</button>
+	</div>
+	<div>
 		<p id="detail"></p>
 	</div>
-	<script>
-		var details = document.getElementById("detail");
-
-		var canvasElem = document.getElementById("canvas");
-		var ctx = canvasElem.getContext("2d");
-
-		var offset = 30;
-		var size = 50;
-		var line = 5
-		var count = line * line; // 9
-		var boxes = new Array(count);
-		var currentBox = 0;
-		var secret = parseInt(Math.random() * count) + 1;
-
-		canvasElem.width = offset * (line + 1) + size * line;
-		canvasElem.height = offset * (line + 1) + size * line;
-		
-		var Rectangle = function (obj) {
-			obj = obj || {};
-			return {
-				name: obj.name || "rectangle",
-				colorLine: obj.colorLine || "gray",
-				colorFillNorm: obj.colorFill || "lightgray",
-				colorFillIsCurr: "yellow",
-				x0: obj.x || 0,
-				y0: obj.y || 0,
-				x1: obj.x || 0,
-				y2: obj.y || 0,
-				size: obj.size || 50,
-				isShaked: obj.isShaked || false,
-				isCurrent: false,
-				draw: function () {
-					if (this.isCurrent) {
-						ctx.fillStyle = this.colorFillIsCurr;
-					} else {
-						ctx.fillStyle = this.colorFillNorm;
-					}
-					ctx.strokeStyle = this.colorLine;
-					this.shake();
-					ctx.fillRect(this.x1, this.y1, this.size, this.size);
-					ctx.strokeRect(this.x1, this.y1, this.size, this.size);
-				},
-				moveTo: function (x, y) {
-					this.x0 = x;
-					this.y0 = y;
-				},
-				shake: function () {
-					if(this.isShaked) {
-						this.x1 = this.x0 + (Math.random()-0.5) * this.size / 20;
-						this.y1 = this.y0 + (Math.random()-0.5) * this.size / 20;
-					} else {
-						this.x1 = this.x0;
-						this.y1 = this.y0;
-					}	
-				},
-				checkCurr: function(mX, mY) {
-					if (mX > this.x0 && mX < this.x0 + this.size && mY > this.y0 && mY < this.y0 + this.size) {
-						this.isCurrent = true;
-					} else {
-						this.isCurrent = false;
-					}
-				},
-				checkSecret: function() {
-					if (this.isCurrent && this.name == secret) {
-						this.colorFillNorm = "yellow";
-					}
-				},
-			};
-		}
-
-		canvasElem.onmousemove = function(e) {
-			e = e || event;
-			var x = e.clientX - canvasElem.offsetLeft;
-			var y = e.clientY - canvasElem.offsetTop;
-			for (var i = 0; i < boxes.length; i++) {
-				boxes[i].checkCurr(x, y);
-			}
-		}
-		canvasElem.onmousedown = function(e) {
-			e = e || event;
-			for (var i = 0; i < boxes.length; i++) {
-				boxes[i].checkSecret();
-			}
-		}
-
-		function init() {
-			var v = new Rectangle();
-			for (var i = 0; i < count; i++) {
-				boxes[i] = new Rectangle({
-					name: i + 1,
-					x: (i % line) * (offset + size) + offset,
-					y: parseInt(i / line) * (offset + size) + offset,
-					size: 50,
-					isShaked: true,
-				});
-			}
-		};
-
-		function draw() {
-			for (var i = 0; i < count; i++) {
-				boxes[i].draw();
-			}
-		}
-
-		function update() {
-			ctx.clearRect(0, 0, canvasElem.width, canvasElem.height);
-			for (var i = 0; i < count; i++) {
-				if(boxes[i].isCurrent) {
-					currentBox = boxes[i].name;
-				}
-			}
-			draw();
-			details.innerHTML = "Secret seed #" + secret + "<br>";
-			details.innerHTML += "Current box #" + currentBox;
-		}
-
-		init();
-		setInterval(update, 100);
-	</script>
+	<script src="canvas.js" type="text/javascript"></script>
 </body>
 </html>
