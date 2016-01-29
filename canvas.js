@@ -8,7 +8,7 @@ var ctx2 = canvasTitle.getContext("2d");
 
 var offset = 30;
 var size = 50;
-var line = 3
+var line = 5;
 var fontSize = size / 1.5;
 var fontOffset = offset / 3;
 
@@ -16,6 +16,7 @@ var count = line * line; // 9
 var boxes = new Array(count);
 var currentBox = 0;
 var secret = parseInt(Math.random() * count) + 1;
+var isFinished = false;
 
 canvasMain.width = offset * (line + 1) + size * line;
 canvasMain.height = canvasMain.width;
@@ -82,7 +83,10 @@ var Rectangle = function (obj) {
 			if (this.isShaked && this.isCurrent) {
 				if (this.name == secret) {
 					this.colorFillNorm = "lightgreen";
+					isFinished = true;
 					stopAll();
+					buttons[0].disalbe = true;
+					buttons[0].innerHTML = "-----"
 				} else {
 					this.colorFillNorm = "yellow";
 				}
@@ -108,7 +112,22 @@ canvasMain.onclick = function(e) {
 	}
 }
 
+// initialized all elements
 function init() {
+	secret = parseInt(Math.random() * count) + 1;
+	tic = 0;
+	toc = 0;
+	time = 0;
+	isFinished = false;
+	ctx.clearRect(0, 0, canvasMain.width, canvasMain.height);
+	ctx2.clearRect(0, 0, canvasTitle.width, canvasTitle.height);
+	arrange();
+	drawBoxes();
+	drawTitle(false);
+	buttons[0].disalbe = false;
+};
+
+function arrange() {
 	for (var i = 0; i < count; i++) {
 		boxes[i] = new Rectangle({
 			name: i + 1,
@@ -118,8 +137,7 @@ function init() {
 			isShaked: false,
 		});
 	}
-	drawBoxes();
-};
+}
 
 // draw boxes
 function drawBoxes() {
@@ -142,7 +160,6 @@ function drawTitle(isShaked) {
 		ctx2.shadowBlur = 5 * (Math.random()-0.5);
 		ctx2.shadowColor = "lightgray";
 
-		
 		text = showTime();
 		ctx2.fillText(text, 
 			x + (Math.random()-0.5) * fontSize * 0.125 * 0.5, 
@@ -150,6 +167,11 @@ function drawTitle(isShaked) {
 
 		// SHAKING
 		var text = "SHAKING";
+		if (buttons[0].innerHTML == "Shake") {
+			text = "STOPPED";
+		} else if (isFinished == true) {
+			text = "YOU GOT IT!"
+		}
 		ctx2.font = (fontSize * (Math.random() * 0.0625 + 1)) + "px" + " " + "sans-serif";
 		ctx2.fillText(text, 
 			x + (Math.random()-0.5) * fontSize * 0.125, 
@@ -159,13 +181,13 @@ function drawTitle(isShaked) {
 		text = showTime();
 		ctx2.fillText(text, x, fontOffset * 2 + fontSize * 2);
 
-		// SHAKING
-		var text = "SHAKING";
+		// SHAKE
+		var text = "LET'S SHAKE!";
 		ctx2.fillText(text, x, fontOffset + fontSize);
 	}
-	
 }
 
+// update two canvases
 function update() {
 	ctx.clearRect(0, 0, canvasMain.width, canvasMain.height);
 	ctx2.clearRect(0, 0, canvasTitle.width, canvasTitle.height);
@@ -181,39 +203,30 @@ function update() {
 	details.innerHTML += "Time: " + showTime(); 
 }
 
-// Shake all
-function startAll() {
-	window.clearInterval(intv);
+// Shake all boxes
+function shakeAll() {
 	for (var i = 0; i < count; i++) {
 		boxes[i].isShaked = true;
 	}
+	intv = self.setInterval(update, 100);
+	buttons[0].innerHTML = "Stop";
 }
 
-// Stop all 
+// Stop all boxes
 function stopAll() {
 	for (var i = 0; i < boxes.length; i++) {
 		boxes[i].isShaked = false;
 	}
 	window.clearInterval(intv);
 	update();
+	buttons[0].innerHTML = "Shake";
 }
-
-// START
-var intv;
-var myDate = new Date();
-var tic; 
-buttons[0].onclick = function(e) {
-	init();
-	startAll();
-	secret = parseInt(Math.random() * count) + 1;
-	intv = self.setInterval(update, 100);
-	tic = (new Date()).getTime();
-};
 
 function showTime() {
 	var ss = "00:00.0";
 	if (tic) {
-		var s = (((new Date()).getTime() - tic) / 1000);
+		toc = new Date().getTime();
+		var s = ((time + toc - tic) / 1000);
 		var mnt = parseInt(s/60) % 100;
 		var snd = (s % 60).toFixed(1);
 		ss = mnt;
@@ -229,8 +242,39 @@ function showTime() {
 	return ss;	
 }
 
+function handleButtonShakeOrStop(e) {
+	if (!isFinished) {
+		if (e.target.innerHTML == "Shake") {
+			e.target.innerHTML = "Stop";
+			shakeAll();
+			tic = new Date().getTime();
+		} else if (e.target.innerHTML == "Stop") {
+			e.target.innerHTML = "Shake";
+			stopAll();
+			time += toc - tic;
+			toc = tic;
+		}
+	}
+}
+
+function handleButtonReset(e) {
+	stopAll();
+	buttons[0].innerHTML = "Shake";
+	init();
+}
+
+// START
+var intv;
+var myDate = new Date();
+var tic;
+var toc; 
+var timer;
+
+// button shake
+buttons[0].onclick = handleButtonShakeOrStop;
+
+// button reset
+buttons[1].onclick = handleButtonReset;
+
 init();
-
-
-
 

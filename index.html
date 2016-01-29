@@ -8,19 +8,28 @@
 	<meta rel="shortcut icon" href="" type="image/x-icon"/>
 	<style>
 		canvas {
-			border: dotted thick red;
+			border: dotted thick rgba(255, 0, 0, 0.5);
+		}
+		body > canvas {
+			float: left;
+			position: static;
 		}
 	</style>
 </head>
 <body>
 	<h1>Game: Q</h1>
 	<h2>Prototype</h2>
-	<canvas id="canvasTitle" width='300', height="100">
-		Your browser doesn't support the <code>canvas</code> element
-	</canvas>
-	<canvas id="canvasMain" width="300" height="300">
-		Your browser doesn't support the <code>canvas</code> element
-	</canvas>
+	<div>
+		<canvas id="canvasTitle" width='300', height="100">
+			Your browser doesn't support the <code>canvas</code> element
+		</canvas>
+	</div>
+	<div>
+		<canvas id="canvasMain" width="300" height="300">
+			Your browser doesn't support the <code>canvas</code> element
+		</canvas>
+	</div>
+	
 	<div>
 		<button>Shake</button>
 		<button>Reset</button>
